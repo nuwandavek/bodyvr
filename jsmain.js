@@ -2,11 +2,13 @@ import * as THREE from 'three';
 import { VRButton } from 'three/examples/jsm/webxr/VRButton.js';
 import Stats from 'three/examples/jsm/libs/stats.module.js';
 
+import { WebRTCStream, FileStream } from "./streaming.js";
+
 
 function attachVideoCylinder(scene){
-  const video1 = document.getElementById('video1');
+  const video1 = document.getElementById('ecamera_video');
   const texture1 = new THREE.VideoTexture(video1);
-  const video2 = document.getElementById('video2');
+  const video2 = document.getElementById('dcamera_video');
   const texture2 = new THREE.VideoTexture(video2);
 
   texture1.wrapS = THREE.RepeatWrapping;
@@ -28,17 +30,15 @@ function attachVideoCylinder(scene){
   cylinderBack.rotation.x = -10 * (Math.PI / 180); // Apply pitch correction
   cylinderBack.position.y =  3;
   cylinderFront.position.y =  3;
-  
 
   scene.add(cylinderFront, cylinderBack);
 
   video1.play().catch((e) => console.error("Error playing video 1:", e));
   video2.play().catch((e) => console.error("Error playing video 2:", e));
-
 }
 
-function attachArrow(scene){  
-  const geometry = new THREE.ConeGeometry( 0.2, 0.3, 32 ); 
+function attachArrow(scene){
+  const geometry = new THREE.ConeGeometry( 0.2, 0.3, 32 );
   const material = new THREE.MeshBasicMaterial( {color: "#c0392b"} );
   const cone = new THREE.Mesh(geometry, material );
   const cone_pos = [0, 0, -4];
@@ -54,26 +54,23 @@ function attachArrow(scene){
   wireframe.rotation.set(...cone_rot);
 
   scene.add(wireframe);
-
 }
-
 
 function addControllerUI(scene, controller){
   const ringGeometry = new THREE.RingGeometry(0.3, 0.32, 32);
   const ringMaterial = new THREE.MeshBasicMaterial({ color: "#bdc3c7", side: THREE.DoubleSide, transparent: true, opacity: 1 });
   const ring = new THREE.Mesh(ringGeometry, ringMaterial);
-  
+
   const geometry = new THREE.CircleGeometry(0.2, 32);
   const material = new THREE.MeshBasicMaterial({color: "#2980b9"});
   const circle = new THREE.Mesh(geometry, material);
-  
+
   ring.position.set(...controller.uiOffset);
   circle.position.set(...controller.uiOffset);
   scene.add(ring);
   scene.add(circle);
   controller.ui = circle;
 }
-
 
 function attachControllers(scene, controller1, controller2){
   controller1.name = "right";
@@ -99,8 +96,6 @@ function attachControllers(scene, controller1, controller2){
   }
 }
 
-
-
 function initScene(){
   const stats = new Stats();
   stats.showPanel( 0 );
@@ -119,7 +114,6 @@ function initScene(){
   return [scene, camera, renderer, vrButton, stats];
 }
 
-
 function controllerMovement(controller){
   if (controller.gamepad){
     controller.ui.position.x = controller.gamepad.axes[2] * 0.3 + controller.uiOffset[0];
@@ -127,11 +121,11 @@ function controllerMovement(controller){
   }
 }
 
-function runXR(){  
+function runXR(stream) {
   const [scene, camera, renderer, vrButton, stats] = initScene();
   const controller1 = renderer.xr.getController(0);
   const controller2 = renderer.xr.getController(1);
-  
+
   function animate() {
     renderer.setAnimationLoop(render);
   }
@@ -152,9 +146,29 @@ function runXR(){
     attachVideoCylinder(scene);
     attachArrow(scene);
     attachControllers(scene, controller1, controller2);
+
     animate();
+
+    stream.start().then((answer) => {
+      console.log("Stream started with answer", answer);
+    });
   });
 }
 
+const cameras = ["wideRoad", "driver"];
+const video_elements = ["ecamera_video", "dcamera_video"];
+/* ==== PUT YOUR SERVER URL HERE ==== */
+const url = null
 
-runXR();
+var stream = null
+if (url) {
+  console.log(`webrtcd url set to ${url}, using webrtcd stream!`)
+
+  stream = new WebRTCStream(url, cameras, video_elements);
+} else {
+  console.log("webrtcd url not set, using file stream!")
+
+  const files = ["static/ecamera.mp4", "static/dcamera.mp4"]
+  stream = new FileStream(files, video_elements);
+}
+runXR(stream);
