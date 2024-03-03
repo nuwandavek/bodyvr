@@ -2,8 +2,6 @@ import * as THREE from 'three';
 import { VRButton } from 'three/examples/jsm/webxr/VRButton.js';
 import Stats from 'three/examples/jsm/libs/stats.module.js';
 
-import { WebRTCStream, FileStream } from "./streaming.js";
-
 
 function attachVideoCylinder(scene){
   const video1 = document.getElementById('ecamera_video');
@@ -121,7 +119,7 @@ function controllerMovement(controller){
   }
 }
 
-function runXR(stream) {
+export function runXR(stream) {
   const [scene, camera, renderer, vrButton, stats] = initScene();
   const controller1 = renderer.xr.getController(0);
   const controller2 = renderer.xr.getController(1);
@@ -154,21 +152,3 @@ function runXR(stream) {
     });
   });
 }
-
-const cameras = ["wideRoad", "driver"];
-const video_elements = ["ecamera_video", "dcamera_video"];
-/* ==== PUT YOUR SERVER URL HERE ==== */
-const url = null
-
-var stream = null
-if (url) {
-  console.log(`webrtcd url set to ${url}, using webrtcd stream!`)
-
-  stream = new WebRTCStream(url, cameras, video_elements);
-} else {
-  console.log("webrtcd url not set, using file stream!")
-
-  const files = ["static/ecamera.mp4", "static/dcamera.mp4"]
-  stream = new FileStream(files, video_elements);
-}
-runXR(stream);
