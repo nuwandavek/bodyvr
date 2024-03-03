@@ -1,5 +1,8 @@
 #!/usr/bin/env python3
 # WebXR on oculus browser needs https
+#
+# For some reason this doesn't work with simple http.server from stdlib, so using aiohttp
+#
 
 from aiohttp import web
 import ssl
