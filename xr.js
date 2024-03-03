@@ -31,8 +31,8 @@ function attachVideoCylinder(scene){
 
   scene.add(cylinderFront, cylinderBack);
 
-  video1.play().catch((e) => console.error("Error playing video 1:", e));
-  video2.play().catch((e) => console.error("Error playing video 2:", e));
+  // video1.play().catch((e) => console.error("Error playing video 1:", e));
+  // video2.play().catch((e) => console.error("Error playing video 2:", e));
 }
 
 function attachArrow(scene){
@@ -59,7 +59,7 @@ function addControllerUI(scene, controller){
   const ringMaterial = new THREE.MeshBasicMaterial({ color: "#bdc3c7", side: THREE.DoubleSide, transparent: true, opacity: 1 });
   const ring = new THREE.Mesh(ringGeometry, ringMaterial);
 
-  const geometry = new THREE.CircleGeometry(0.2, 32);
+  const geometry = new THREE.SphereGeometry(0.2, 32, 32);
   const material = new THREE.MeshBasicMaterial({color: "#2980b9"});
   const circle = new THREE.Mesh(geometry, material);
 
@@ -70,23 +70,21 @@ function addControllerUI(scene, controller){
   controller.ui = circle;
 }
 
-function attachControllers(scene, controller1, controller2){
-  controller1.name = "right";
-  controller2.name = "left";
-
-  controller1.uiOffset = [0.5, -1, -4];
-  controller2.uiOffset = [-0.5, -1, -4];
-
-  scene.add(controller1);
-  scene.add(controller2);
-
-  controller1.addEventListener('connected', event => attachGamepad(event, controller1));
-  controller2.addEventListener('connected', event => attachGamepad(event, controller2));
-
+function attachController(scene, controller){
+  scene.add(controller);
+  controller.addEventListener('connected', event => attachGamepad(event, controller));
   function attachGamepad(event, controller) {
     if (event.data.gamepad) {
         controller.gamepad = event.data.gamepad;
-        console.log("Gamepad attached to controller", controller);
+        controller.hand = event.data.handedness;
+        console.log("Gamepad attached to controller", controller.gamepad, controller.hand);
+        
+        if (controller.hand == "right") {
+          controller.uiOffset = [0.5, -1, -4];
+        } else {
+          controller.uiOffset = [-0.5, -1, -4];
+        }
+        
         addControllerUI(scene, controller);
     } else {
         console.log("Connected device does not have a gamepad");
@@ -141,7 +139,7 @@ export function runXR(videoSourceStartHandler, controllerJoystickCallback) {
     controllerMovement(controller1);
     controllerMovement(controller2);
 
-    sendControlMessage(controller2);
+    // sendControlMessage(controller2);
 
     renderer.render(scene, camera);
   	stats.end();
@@ -150,7 +148,8 @@ export function runXR(videoSourceStartHandler, controllerJoystickCallback) {
   vrButton.addEventListener('click', () => {
     attachVideoCylinder(scene);
     attachArrow(scene);
-    attachControllers(scene, controller1, controller2);
+    attachController(scene, controller1);
+    attachController(scene, controller2);
 
     animate();
 
