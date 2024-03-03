@@ -7,6 +7,8 @@ export class FileStream {
     this.videoElements = videoElements
   }
 
+  async controlJoystick(x, y) {}
+
   async start() {
     this.files.forEach((file, index) => {
       const videoElement = document.getElementById(this.videoElements[index])
@@ -60,6 +62,17 @@ export class WebRTCStream {
     })
   }
 
+  async controlJoystick(x, y) {
+    // body axes are inverted
+    const message = {type: "testJoystick", data: {axes: [y, x], buttons: [false]}}
+    if (this.data_channel.readyState != "open") {
+      console.log("Data channel not open, not sending joystick message")
+      return
+    }
+
+    this.data_channel.send(JSON.stringify(message))
+  }
+
   async start() {
     var offer = await this.peerConnection.createOffer()
     await this.peerConnection.setLocalDescription(offer)
@@ -67,7 +80,8 @@ export class WebRTCStream {
     console.log("Sending offer", offer)
 
     const endpointUrl = `${this.baseUrl}/stream`
-    const body = {sdp: offer.sdp, cameras: this.cameras, bridge_services_in: ["testJoystick"], bridge_services_out: []}
+    // FIXME: bridge_services_out cannot be empty for now, because of a bug in webrtcd
+    const body = {sdp: offer.sdp, cameras: this.cameras, bridge_services_in: ["testJoystick"], bridge_services_out: ["customReservedRawData0"]}
     const request = await fetch(endpointUrl, {
       method: "POST",
       body: JSON.stringify(body),

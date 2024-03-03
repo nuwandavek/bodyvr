@@ -119,13 +119,18 @@ function controllerMovement(controller){
   }
 }
 
-export function runXR(stream) {
+export function runXR(videoSourceStartHandler, controllerJoystickCallback) {
   const [scene, camera, renderer, vrButton, stats] = initScene();
   const controller1 = renderer.xr.getController(0);
   const controller2 = renderer.xr.getController(1);
 
   function animate() {
     renderer.setAnimationLoop(render);
+  }
+
+  function sendControlMessage(controller) {
+    var [x, y] = [controller.gamepad.axes[2], controller.gamepad.axes[3]]
+    controllerJoystickCallback(x, y);
   }
 
   function render() {
@@ -135,6 +140,8 @@ export function runXR(stream) {
 
     controllerMovement(controller1);
     controllerMovement(controller2);
+
+    sendControlMessage(controller2);
 
     renderer.render(scene, camera);
   	stats.end();
@@ -147,8 +154,6 @@ export function runXR(stream) {
 
     animate();
 
-    stream.start().then((answer) => {
-      console.log("Stream started with answer", answer);
-    });
+    videoSourceStartHandler();
   });
 }

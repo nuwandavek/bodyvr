@@ -19,4 +19,21 @@ if (url) {
   stream = new FileStream(files, video_elements);
 }
 
-runXR(stream);
+runXR(
+  function() {
+    stream.start().then((answer) => {
+      console.log("Stream started with answer", answer);
+    });
+  },
+  function(x, y) {
+    const frame = this.counter || 0
+    this.counter = frame + 1
+    // limit the body joystick updates to every 5 frames
+    if (frame % 5 != 0) {
+      return
+    }
+
+    console.log("controller joystick moved", x, y)
+    stream.controlJoystick(x, y)
+  }.bind({counter: 0}),
+)
