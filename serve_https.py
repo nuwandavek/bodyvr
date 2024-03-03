@@ -5,6 +5,7 @@
 #
 
 from aiohttp import web
+from aiohttp import ClientSession
 import ssl
 import sys
 import os
@@ -13,6 +14,10 @@ port = 8000
 if len(sys.argv) > 1:
   port = int(sys.argv[1])
 bind_addr = "0.0.0.0"
+
+if "WEBRTCD_HOST" not in os.environ:
+  raise ValueError("WEBRTCD_HOST environment variable not set")
+webrtcd_host = os.environ["WEBRTCD_HOST"]
 
 os.makedirs("ssl", exist_ok=True)
 cert_path = "ssl/cert.pem"
@@ -26,11 +31,18 @@ if not os.path.exists(cert_path) or not os.path.exists(key_path):
 ssl_context = ssl.SSLContext(protocol=ssl.PROTOCOL_TLS_SERVER)
 ssl_context.load_cert_chain(cert_path, key_path)
 
+async def handle_stream(request):
+  params = await request.text()
+  print("Sending offer to webrtcd...")
+  webrtcd_url = f"http://{webrtcd_host}/stream"
 
-async def handle_root(request):
-    raise web.HTTPFound('/index.html')
+  async with ClientSession() as session, session.post(webrtcd_url, data=params) as resp:
+    assert resp.status == 200
+    answer = await resp.json()
+    return web.json_response(answer)
 
 app = web.Application()
 app.router.add_get('/', lambda r: web.HTTPFound('/index.html'))
+app.router.add_post('/stream', handle_stream)
 app.router.add_static("/", os.getcwd())
 web.run_app(app, access_log=None, host=bind_addr, port=port, ssl_context=ssl_context)

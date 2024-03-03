@@ -4,14 +4,14 @@ import { runXR } from "./xr.js"
 
 const cameras = ["wideRoad", "driver"]
 const video_elements = ["ecamera_video", "dcamera_video"]
-/* ==== PUT YOUR SERVER URL HERE ==== */
-const url = null
+/* ==== CHANGE IT TO SWITCH BETWEEN FILE AND STREAM ==== */
+const stream_mode = true
 
 var stream = null
-if (url) {
-  console.log(`webrtcd url set to ${url}, using webrtcd stream!`)
+if (stream_mode) {
+  console.log(`webrtcd url set to /, using webrtcd stream!`)
 
-  stream = new WebRTCStream(url, cameras, video_elements);
+  stream = new WebRTCStream("", cameras, video_elements);
 } else {
   console.log("webrtcd url not set, using file stream!")
 
