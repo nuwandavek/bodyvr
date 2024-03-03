@@ -98,3 +98,17 @@ export class WebRTCStream {
     return actualAnswer
   }
 }
+
+export class CompositeStream {
+  constructor(streams) {
+    this.streams = streams
+  }
+
+  async start() {
+    await Promise.all(this.streams.map(stream => stream.start()))
+  }
+
+  async controlJoystick(x, y) {
+    await this.streams[0].controlJoystick(x, y)
+  }
+}

@@ -1,8 +1,8 @@
-import { WebRTCStream, FileStream } from "./streaming.js"
+import { WebRTCStream, FileStream, CompositeStream } from "./streaming.js"
 import { runXR } from "./xr.js"
 
 
-const cameras = ["wideRoad", "driver"]
+const cameras = ["driver", "wideRoad"]
 const video_elements = ["ecamera_video", "dcamera_video"]
 /* ==== CHANGE IT TO SWITCH BETWEEN FILE AND STREAM ==== */
 const stream_mode = true
@@ -11,7 +11,11 @@ var stream = null
 if (stream_mode) {
   console.log(`webrtcd url set to /, using webrtcd stream!`)
 
-  stream = new WebRTCStream("", cameras, video_elements);
+  var streams = []
+  for (let i = 0; i < cameras.length; i++) {
+    streams.push(new WebRTCStream("", [cameras[i]], [video_elements[i]]))
+  }
+  stream = new CompositeStream(streams);
 } else {
   console.log("webrtcd url not set, using file stream!")
 
