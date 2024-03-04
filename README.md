@@ -1,6 +1,6 @@
 # body-vr
 
-Control your [commabody](https://www.comma.ai/shop/body) in VR, with an Oculus headset and controllers. This repo leverages comma's [body-jim](https://github.com/commaai/body-jim), a gymnasium API and [webXR](https://immersiveweb.dev/) on the Oculus Browser.
+Control your [commabody](https://www.comma.ai/shop/body) in VR, with an Oculus headset and controllers. This repo leverages `webrtcd`, a [webRTC daemon](https://github.com/commaai/openpilot/blob/master/system/webrtc/webrtcd.py) running on the body, and [webXR](https://immersiveweb.dev/) on the Oculus Browser.
 ![Control commabody via Oculus, in VR](./static/display.webp)
 
 ## Links
