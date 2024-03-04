@@ -57,7 +57,9 @@ export class WebRTCStream {
 
     this.cameras.forEach((camera, index) => {
       if (camera == cameraName) {
-        document.getElementById(this.videoElements[index]).srcObject = event.streams[0]
+        var element = document.getElementById(this.videoElements[index])
+        element.srcObject = event.streams[0]
+        element.play()
       }
     })
   }
@@ -105,7 +107,7 @@ export class CompositeStream {
   }
 
   async start() {
-    await Promise.all(this.streams.map(stream => stream.start()))
+    return await Promise.all(this.streams.map(stream => stream.start()))
   }
 
   async controlJoystick(x, y) {

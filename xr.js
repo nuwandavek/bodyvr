@@ -30,9 +30,6 @@ function attachVideoCylinder(scene){
   cylinderFront.position.y =  3;
 
   scene.add(cylinderFront, cylinderBack);
-
-  // video1.play().catch((e) => console.error("Error playing video 1:", e));
-  // video2.play().catch((e) => console.error("Error playing video 2:", e));
 }
 
 function attachArrow(scene){
@@ -78,13 +75,13 @@ function attachController(scene, controller){
         controller.gamepad = event.data.gamepad;
         controller.hand = event.data.handedness;
         console.log("Gamepad attached to controller", controller.gamepad, controller.hand);
-        
+
         if (controller.hand == "right") {
           controller.uiOffset = [0.5, -1, -4];
         } else {
           controller.uiOffset = [-0.5, -1, -4];
         }
-        
+
         addControllerUI(scene, controller);
     } else {
         console.log("Connected device does not have a gamepad");
