@@ -71,7 +71,7 @@ export class WebRTCStream {
     }
 
     // body axes are inverted
-    const message = {type: "testJoystick", data: {axes: [y, x], buttons: [false]}}
+    const message = {type: "testJoystick", data: {axes: [y, -x], buttons: [false]}}
     if (this.data_channel.readyState != "open") {
       console.log("Data channel not open, not sending joystick message")
       return

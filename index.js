@@ -2,7 +2,7 @@ import { WebRTCStream, FileStream, CompositeStream } from "./streaming.js"
 import { runXR } from "./xr.js"
 
 
-const cameras = ["driver", "wideRoad"]
+const cameras = ["wideRoad", "driver"]
 const video_elements = ["ecamera_video", "dcamera_video"]
 /* ==== CHANGE IT TO SWITCH BETWEEN FILE AND STREAM ==== */
 fetch('/stream_mode')

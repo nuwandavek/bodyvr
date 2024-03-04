@@ -124,7 +124,7 @@ export function runXR(videoSourceStartHandler, controllerJoystickCallback) {
   }
 
   function sendControlMessage(controller) {
-    if (!controller.gamepad) {
+    if (!controller.gamepad || controller.hand !== "left") {
       return
     }
 
@@ -140,6 +140,7 @@ export function runXR(videoSourceStartHandler, controllerJoystickCallback) {
     controllerMovement(controller1);
     controllerMovement(controller2);
 
+    sendControlMessage(controller1);
     sendControlMessage(controller2);
 
     renderer.render(scene, camera);
