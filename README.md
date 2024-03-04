@@ -15,8 +15,8 @@ WEBRTC_HOST=<ip>:<port> ./serve_https.py
 ## Videos
 
 1. Using a previously recorded video as placeholder
-<video src='./static/development.mp4' width=720/></video>
 
+https://github.com/nuwandavek/bodyvr/assets/20878008/5cee8ab3-38e4-4e2b-b363-2b49a6678538
 
 2. dcamera and ecamera on the body
 <video src='./static/bodycams.mp4' width=720/></video>
