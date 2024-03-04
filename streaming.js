@@ -19,11 +19,12 @@ export class FileStream {
 }
 
 export class WebRTCStream {
-  constructor(url, cameras, videoElements) {
+  constructor(url, enable_joystick, cameras, videoElements) {
     console.assert(cameras.length == videoElements.length)
 
     this.baseUrl = url
     this.cameras = cameras
+    this.enable_joystick = enable_joystick
     this.videoElements = videoElements
     this.peerConnection = new RTCPeerConnection({sdpSemantics: 'unified-plan'})
 
@@ -65,6 +66,10 @@ export class WebRTCStream {
   }
 
   async controlJoystick(x, y) {
+    if (!this.enable_joystick) {
+      return
+    }
+
     // body axes are inverted
     const message = {type: "testJoystick", data: {axes: [y, x], buttons: [false]}}
     if (this.data_channel.readyState != "open") {
@@ -83,7 +88,8 @@ export class WebRTCStream {
 
     const endpointUrl = `${this.baseUrl}/stream`
     // FIXME: bridge_services_out cannot be empty for now, because of a bug in webrtcd
-    const body = {sdp: offer.sdp, cameras: this.cameras, bridge_services_in: ["testJoystick"], bridge_services_out: ["customReservedRawData0"]}
+    const input_services = this.enable_joystick ? ["testJoystick"] : []
+    const body = {sdp: offer.sdp, cameras: this.cameras, bridge_services_in: input_services, bridge_services_out: ["customReservedRawData0"]}
     const request = await fetch(endpointUrl, {
       method: "POST",
       body: JSON.stringify(body),

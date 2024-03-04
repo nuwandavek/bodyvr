@@ -124,6 +124,10 @@ export function runXR(videoSourceStartHandler, controllerJoystickCallback) {
   }
 
   function sendControlMessage(controller) {
+    if (!controller.gamepad) {
+      return
+    }
+
     var [x, y] = [controller.gamepad.axes[2], controller.gamepad.axes[3]]
     controllerJoystickCallback(x, y);
   }
@@ -136,7 +140,7 @@ export function runXR(videoSourceStartHandler, controllerJoystickCallback) {
     controllerMovement(controller1);
     controllerMovement(controller2);
 
-    // sendControlMessage(controller2);
+    sendControlMessage(controller2);
 
     renderer.render(scene, camera);
   	stats.end();

@@ -18,7 +18,8 @@ fetch('/stream_mode')
       console.log(`webrtcd url set to /, using webrtcd stream!`)
       var streams = []
       for (let i = 0; i < cameras.length; i++) {
-        streams.push(new WebRTCStream("", [cameras[i]], [video_elements[i]]))
+        const enable_joystick = i === 0
+        streams.push(new WebRTCStream("", enable_joystick, [cameras[i]], [video_elements[i]]))
       }
       stream = new CompositeStream(streams);
 
