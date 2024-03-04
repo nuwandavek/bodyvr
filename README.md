@@ -18,11 +18,13 @@ WEBRTC_HOST=<ip>:<port> ./serve_https.py
 
 https://github.com/nuwandavek/bodyvr/assets/20878008/5cee8ab3-38e4-4e2b-b363-2b49a6678538
 
-3. dcamera and ecamera on the body
+
+2. dcamera and ecamera on the body
 
 https://github.com/nuwandavek/bodyvr/assets/1649262/15f3fe96-aff6-43d5-8d22-1940a5a8ccdd
 
-5. VR body working!
+
+3. VR body working!
 
 https://github.com/nuwandavek/bodyvr/assets/1649262/2ae728f1-a824-4a54-9c13-bf2bca81f42c
 
