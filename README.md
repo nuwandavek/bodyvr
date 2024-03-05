@@ -10,7 +10,6 @@ Control your [commabody](https://www.comma.ai/shop/body) in VR, with an Oculus h
 ## Usage
 ```python
 WEBRTC_HOST=<ip>:<port> ./serve_https.py
-# Note:  Needs comma body on `webrtcd-cors` branch, for now.
 ```
 ## Videos
 
